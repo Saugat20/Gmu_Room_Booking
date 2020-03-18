@@ -21,36 +21,52 @@ public class Gmu_room_booking {
 		String fname = splited[0];
 		String lname = splited[splited.length -1];
 		
-		//What type of room.
-		System.out.println("How many people room do you want to book.");
-		int room = scan.nextInt();
-		scan.close();
+		//Which building
+		System.out.println("To book a room in frenwick libray press 1.\nTo book a room in innovation hall press 2.\nTo book a room in johnson center press 3.");
+		int building = scan.nextInt();
 		
-
 		
-	
 		System.setProperty("webdriver.chrome.driver", "C:\\Users\\dnesh\\eclipse-workspace\\selenium_project\\driver\\chromedriver.exe");
 		WebDriver driver = new ChromeDriver();
 		
-		//Picking which room...
 		int num_rooms_cap = 0;
-		if(room == 2) {
-			driver.navigate().to("https://gmu.libcal.com/spaces?lid=1205&gid=2116");
-			num_rooms_cap = 14;
-		}
-		else if(room == 4) {
-			driver.navigate().to("https://gmu.libcal.com/spaces?lid=1205&gid=2117");
-			num_rooms_cap = 16;
-		}
-		else if(room == 6) {
-			driver.navigate().to("https://gmu.libcal.com/spaces?lid=1205&gid=2118");
-			num_rooms_cap = 9;
-		}
-		else if(room == 8) {
-			driver.navigate().to("https://gmu.libcal.com/spaces?lid=1205&gid=2119");
-			num_rooms_cap = 5;
-		}
+		if(building == 1) {
+			//What type of room.
+			System.out.println("How many people room do you want to book.");
+			int room = scan.nextInt();
+			scan.close();
 			
+			//Picking which room...			
+			if(room == 2) {
+				driver.navigate().to("https://gmu.libcal.com/spaces?lid=1205&gid=2116");
+				num_rooms_cap = 14;
+			}
+			else if(room == 4) {
+				driver.navigate().to("https://gmu.libcal.com/spaces?lid=1205&gid=2117");
+				num_rooms_cap = 16;
+			}
+			else if(room == 6) {
+				driver.navigate().to("https://gmu.libcal.com/spaces?lid=1205&gid=2118");
+				num_rooms_cap = 9;
+			}
+			else if(room == 8) {
+				driver.navigate().to("https://gmu.libcal.com/spaces?lid=1205&gid=2119");
+				num_rooms_cap = 5;
+			}
+		}
+		else if(building == 2) {
+			driver.navigate().to("https://gmu.libcal.com/spaces?lid=1213");
+			num_rooms_cap= 5;
+		}
+		else if(building == 3) {
+			driver.navigate().to("https://gmu.libcal.com/spaces?lid=1214");
+			num_rooms_cap= 22;
+		}
+		else {
+			System.out.println("Invalid input....\nQuitting program....");
+			System.exit(1);
+		}
+		
 		Thread.sleep(2000);
 		//starting time select
 		//checks if any room is available for the given time.
@@ -58,8 +74,13 @@ public class Gmu_room_booking {
 		int num_rooms = 1;
 		while(num_rooms <= num_rooms_cap) {
 			//checks all the room
-			driver.findElement(By.xpath("/html/body/div[2]/main/div/div/div/div[3]/div[1]/div[2]/div/table/tbody/tr/td[1]/div/div/div/div[1]/div/table/tbody/tr[" + num_rooms + "]/td/div/div/a[2]/span")).click();
-			Thread.sleep(1000);
+			if(building ==1 || building == 3) {
+				driver.findElement(By.xpath("/html/body/div[2]/main/div/div/div/div[3]/div[1]/div[2]/div/table/tbody/tr/td[1]/div/div/div/div[1]/div/table/tbody/tr[" + num_rooms + "]/td/div/div/a[2]/span")).click();
+			}
+			else if(building == 2) {
+				driver.findElement(By.xpath("/html/body/div[2]/main/div/div/div/div[3]/div[1]/div[2]/div/table/tbody/tr/td[1]/div/div/div/div[1]/div/table/tbody/tr[" + num_rooms + "]/td/div/div/a/span")).click();
+			}
+			Thread.sleep(2000);
 			
 			//checks if the room is available
 			String title = driver.findElement(By.xpath("/html/body/div[2]/main/div/div/div/div[2]/div[1]/div[2]/div/table/tbody/tr/td[3]/div/div/div/div[1]/div/table/tbody/tr/td/div/div/a[1]")).getAttribute("title");
@@ -68,7 +89,7 @@ public class Gmu_room_booking {
 			if(!title_split[8].equals("Available")) {
 				//if room is not available goes back to check other rooms.
 				driver.navigate().back();
-				Thread.sleep(1000);
+				Thread.sleep(2000);
 				num_rooms++;
 			}
 			else {
@@ -106,9 +127,14 @@ public class Gmu_room_booking {
 		driver.findElement(By.id("fname")).sendKeys(fname);
 		driver.findElement(By.id("lname")).sendKeys(lname);
 		driver.findElement(By.id("email")).sendKeys(email);
+		Thread.sleep(1000);
 		
 		//conforming the room booking.
 		driver.findElement(By.id("btn-form-submit")).click();
+		Thread.sleep(5000);
+		
+		//closing window
+		driver.close();
 	}
 
 }
